@@ -79,9 +79,26 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\Panel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\friend6.png" />
+    <None Include="Resources\friend5.png" />
+    <None Include="Resources\friend4.png" />
+    <None Include="Resources\friend3.png" />
+    <None Include="Resources\friend2.png" />
+    <None Include="Resources\friend1.png" />
+    <None Include="Resources\enemy7.png" />
+    <None Include="Resources\enemy6.png" />
+    <None Include="Resources\enemy5.png" />
+    <None Include="Resources\enemy4.png" />
+    <None Include="Resources\enemy3.png" />
+    <None Include="Resources\enemy2.png" />
+    <None Include="Resources\enemy1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\friend7.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

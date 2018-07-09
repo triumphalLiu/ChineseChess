@@ -12,18 +12,53 @@ namespace ChineseChess
 {
     public partial class MainForm : Form
     {
+        private GameController gameController;
+        private Dictionary<int, Image> chessmanImagePair;
+        private int RowSum = 10;
+        private int ColSum = 9;
+
         public MainForm()
         {
             InitializeComponent();
+            chessmanImagePair = new Dictionary<int, Image>();
+            chessmanImagePair.Add(-7, Properties.Resources.enemy7); chessmanImagePair.Add(7, Properties.Resources.friend7);
+            chessmanImagePair.Add(-6, Properties.Resources.enemy6); chessmanImagePair.Add(6, Properties.Resources.friend6);
+            chessmanImagePair.Add(-5, Properties.Resources.enemy5); chessmanImagePair.Add(5, Properties.Resources.friend5);
+            chessmanImagePair.Add(-4, Properties.Resources.enemy4); chessmanImagePair.Add(4, Properties.Resources.friend4);
+            chessmanImagePair.Add(-3, Properties.Resources.enemy3); chessmanImagePair.Add(3, Properties.Resources.friend3);
+            chessmanImagePair.Add(-2, Properties.Resources.enemy2); chessmanImagePair.Add(2, Properties.Resources.friend2);
+            chessmanImagePair.Add(-1, Properties.Resources.enemy1); chessmanImagePair.Add(1, Properties.Resources.friend1);
+            chessmanImagePair.Add(0, null);
+        }
+
+        private void ResetAllChessman()
+        {
+            int index = 0;
+            foreach (Control control in this.panelChessman.Controls)
+            {
+                PictureBox pictureBox = (PictureBox)control;
+                pictureBox.Image = chessmanImagePair[gameController.getChessman(index / ColSum, index % ColSum)];
+                index++;
+            }
+        }
+
+        private void ResetAChessman(int lasti, int lastj, int i, int j)
+        {
+            PictureBox pictureBox = (PictureBox)this.panelChessman.Controls[i * ColSum + j];
+            pictureBox.Image = chessmanImagePair[gameController.getChessman(i, j)];
+            PictureBox oldPictureBox = (PictureBox)this.panelChessman.Controls[lasti * ColSum + lastj];
+            oldPictureBox.Image = chessmanImagePair[0];
         }
 
         private void NewGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //如果没有生成过棋盘PictureBox，那么生成10 * 9个
             if (this.panelChessman.Controls.Count == 0)
             {
-                for (int j = 0; j < 10; ++j)
+                gameController = new GameController();
+                for (int j = 0; j < RowSum; ++j)
                 {
-                    for (int i = 0; i < 9; ++i)
+                    for (int i = 0; i < ColSum; ++i)
                     {
                         PictureBox pictureBox = new PictureBox();
                         pictureBox.Size = new Size(70, 70);
@@ -37,49 +72,9 @@ namespace ChineseChess
                     }
                 }
             }
-            int index = 0;
-            foreach (Control control in this.panelChessman.Controls)
-            {
-                PictureBox pictureBox = (PictureBox)control;
-                switch (index)
-                {
-                    case 0: pictureBox.Image = Properties.Resources.enemy6; break;
-                    case 1: pictureBox.Image = Properties.Resources.enemy7; break;
-                    case 2: pictureBox.Image = Properties.Resources.enemy5; break;
-                    case 3: pictureBox.Image = Properties.Resources.enemy3; break;
-                    case 4: pictureBox.Image = Properties.Resources.enemy1; break;
-                    case 5: pictureBox.Image = Properties.Resources.enemy3; break;
-                    case 6: pictureBox.Image = Properties.Resources.enemy5; break;
-                    case 7: pictureBox.Image = Properties.Resources.enemy7; break;
-                    case 8: pictureBox.Image = Properties.Resources.enemy6; break;
-                    case 89: pictureBox.Image = Properties.Resources.friend6; break;
-                    case 88: pictureBox.Image = Properties.Resources.friend7; break;
-                    case 87: pictureBox.Image = Properties.Resources.friend5; break;
-                    case 86: pictureBox.Image = Properties.Resources.friend3; break;
-                    case 85: pictureBox.Image = Properties.Resources.friend1; break;
-                    case 84: pictureBox.Image = Properties.Resources.friend3; break;
-                    case 83: pictureBox.Image = Properties.Resources.friend5; break;
-                    case 82: pictureBox.Image = Properties.Resources.friend7; break;
-                    case 81: pictureBox.Image = Properties.Resources.friend6; break;
-                    case 19: pictureBox.Image = Properties.Resources.enemy4; break;
-                    case 25: pictureBox.Image = Properties.Resources.enemy4; break;
-                    case 27: pictureBox.Image = Properties.Resources.enemy2; break;
-                    case 29: pictureBox.Image = Properties.Resources.enemy2; break;
-                    case 31: pictureBox.Image = Properties.Resources.enemy2; break;
-                    case 33: pictureBox.Image = Properties.Resources.enemy2; break;
-                    case 35: pictureBox.Image = Properties.Resources.enemy2; break;
-                    case 70: pictureBox.Image = Properties.Resources.friend4; break;
-                    case 64: pictureBox.Image = Properties.Resources.friend4; break;
-                    case 62: pictureBox.Image = Properties.Resources.friend2; break;
-                    case 60: pictureBox.Image = Properties.Resources.friend2; break;
-                    case 58: pictureBox.Image = Properties.Resources.friend2; break;
-                    case 56: pictureBox.Image = Properties.Resources.friend2; break;
-                    case 54: pictureBox.Image = Properties.Resources.friend2; break;
-                    default: pictureBox.Image = null;break;
-
-                }
-                ++index;
-            }
+            //重置游戏，重新摆放棋子
+            gameController.Reset();
+            this.ResetAllChessman();
         }
 
         private void SkipToolStripMenuItem_Click(object sender, EventArgs e)

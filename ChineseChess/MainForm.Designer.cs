@@ -67,28 +67,28 @@ namespace ChineseChess
             // 
             this.newGameToolStripMenuItem.Name = "newGameToolStripMenuItem";
             this.newGameToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.newGameToolStripMenuItem.Text = "NewGame";
+            this.newGameToolStripMenuItem.Text = "新游戏";
             this.newGameToolStripMenuItem.Click += new System.EventHandler(this.NewGameToolStripMenuItem_Click);
             // 
             // skipToolStripMenuItem
             // 
             this.skipToolStripMenuItem.Name = "skipToolStripMenuItem";
             this.skipToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.skipToolStripMenuItem.Text = "Skip";
+            this.skipToolStripMenuItem.Text = "跳过";
             this.skipToolStripMenuItem.Click += new System.EventHandler(this.SkipToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Text = "悔棋";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.UndoToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Text = "退出";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // panelChessman

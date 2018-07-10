@@ -143,6 +143,7 @@ namespace ChineseChess
             //当前有选中的
             else
             {
+                //如果有选中，先判断是不是同一边的，如果是，指针改成Hand
                 //如果有选中，那么尝试移动，先获取这些PictureBox的位置
                 PictureBox lastPictureBox = currentChosenPictureBox;
                 int index = 0, thisIndex = 0, lastIndex = 0;
@@ -154,7 +155,10 @@ namespace ChineseChess
                         thisIndex = index;
                     index++;
                 }
-                if (true == gameController.CanMove(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
+                //尝试移动，查看结果，但是不实际移动
+                if ((gameController.GetChessman(lastIndex / ColSum, lastIndex % ColSum) < 0 && gameController.GetChessman(thisIndex / ColSum, thisIndex % ColSum) < 0)
+                 || (gameController.GetChessman(lastIndex / ColSum, lastIndex % ColSum) > 0 && gameController.GetChessman(thisIndex / ColSum, thisIndex % ColSum) > 0)
+                 || true == gameController.CanMove(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
                     this.Cursor = Cursors.Hand;
                 else
                     this.Cursor = Cursors.No;

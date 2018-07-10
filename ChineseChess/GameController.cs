@@ -61,6 +61,29 @@ namespace ChineseChess
             return avalChess[i][j];
         }
 
+        //获取路径中棋子个数
+        public int GetChessmanCountInPath(int oldi, int oldj, int i, int j)
+        {
+            int count = 0;
+            if(i == oldi)
+            {
+                int maxer = Math.Max(oldj, j);
+                int miner = Math.Min(oldj, j);
+                for (int loop = miner + 1; loop < maxer; ++loop)
+                    if (chessMan[i][loop] != 0)
+                        count++;
+            }
+            else if(j == oldj)
+            {
+                int maxer = Math.Max(oldi, i);
+                int miner = Math.Min(oldi, i);
+                for (int loop = miner + 1; loop < maxer; ++loop)
+                    if (chessMan[loop][j] != 0)
+                        count++;
+            }
+            return count;
+        }
+
         public bool CanMove(int oldi, int oldj, int i, int j)
         {
             //是否越界
@@ -76,29 +99,110 @@ namespace ChineseChess
                 case 0: return false;
                 //帅/将 必须在九宫格内，每次只能移动一步
                 case 1:
+                    //目标仅移动一步
+                    if (Math.Abs(i - oldi) + Math.Abs(j - oldj) != 1)
+                        return false;
+                    //目标在九宫格内
+                    if (type < 0 && (i >= 0 && i <= 2 && j >= 3 && j <= 5))
+                        return true;
+                    else if (type > 0 && (i >= 7 && i <= 9 && j >= 3 && j <= 5))
+                        return true;
                     break;
                 //兵/卒 只能平移或者向对方移动
                 case 2:
+                    //目标仅移动一步
+                    if (Math.Abs(i - oldi) + Math.Abs(j - oldj) != 1)
+                        return false;
+                    //目标平移或向对方移动
+                    if (type < 0 && (i > oldi || (i == oldi && i >= 5)))
+                        return true;
+                    if (type > 0 && (i < oldi || (i == oldi && i < 5)))
+                        return true;
                     break;
                 //仕/士 必须在九宫格内，每次只能斜线一步
                 case 3:
+                    //目标仅斜线移动一步
+                    if (!(Math.Abs(i - oldi) == 1 && Math.Abs(j - oldj) == 1))
+                        return false;
+                    //目标在九宫格内
+                    if (type < 0 && (i >= 0 && i <= 2 && j >= 3 && j <= 5))
+                        return true;
+                    else if (type > 0 && (i >= 7 && i <= 9 && j >= 3 && j <= 5))
+                        return true;
                     break;
-                //炮/砲 仅可直线移动，且如果路径中有棋子，必须移动到敌方棋子上
+                //炮/砲 仅可直线移动，且如果路径中有棋子(有且仅有1个)，必须移动到敌方棋子上
                 case 4:
+                    //仅可直线移动
+                    if (i != oldi && j != oldj)
+                        return false;
+                    //如果目标为空位，那么路径中不能有棋子，否则必须有1个
+                    if (GetChessman(i, j) == 0 && GetChessmanCountInPath(oldi, oldj, i, j) == 0)
+                        return true;
+                    if (GetChessman(i, j) != 0 && GetChessmanCountInPath(oldi, oldj, i, j) == 1)
+                        return true;
                     break;
-                //相/象 仅可田字型移动，且不可过河
+                //相/象 仅可田字型移动，且不可卡位，且不可过河
                 case 5:
+                    //不可过河
+                    if (type < 0 && i >= 5)
+                        return false;
+                    if (type > 0 && i < 5)
+                        return false;
+                    //仅可田字型移动
+                    if (!(Math.Abs(i - oldi) == 2 && Math.Abs(j - oldj) == 2))
+                        return false;
+                    //不可被卡位
+                    if (i > oldi && j > oldj && chessMan[oldi + 1][oldj + 1] == 0)
+                        return true;
+                    if (i > oldi && j < oldj && chessMan[oldi + 1][oldj - 1] == 0)
+                        return true;
+                    if (i < oldi && j > oldj && chessMan[oldi - 1][oldj + 1] == 0)
+                        return true;
+                    if (i < oldi && j < oldj && chessMan[oldi - 1][oldj - 1] == 0)
+                        return true;
                     break;
                 //车/车 仅可直线移动，且路径中不能有棋子
                 case 6:
+                    //仅可直线移动
+                    if (i != oldi && j != oldj)
+                        return false;
+                    //路径中不能有棋子
+                    if (GetChessmanCountInPath(oldi, oldj, i, j) == 0)
+                        return true;
                     break;
                 //马/马 仅可日字型移动，且不能被卡位
                 case 7:
+                    //仅可日字型移动
+                    if (!((Math.Abs(i - oldi) == 2 && Math.Abs(j - oldj) == 1) || (Math.Abs(i - oldi) == 1 && Math.Abs(j - oldj) == 2)))
+                        return false;
+                    //不能被卡位
+                    if (Math.Abs(i - oldi) == 2)
+                    {
+                        if (i > oldi && j > oldj && chessMan[oldi + 1][oldj] == 0)
+                            return true;
+                        if (i > oldi && j < oldj && chessMan[oldi + 1][oldj] == 0)
+                            return true;
+                        if (i < oldi && j > oldj && chessMan[oldi - 1][oldj] == 0)
+                            return true;
+                        if (i < oldi && j < oldj && chessMan[oldi - 1][oldj] == 0)
+                            return true;
+                    }
+                    else if(Math.Abs(j - oldj) == 2)
+                    {
+                        if (i > oldi && j > oldj && chessMan[oldi][oldj + 1] == 0)
+                            return true;
+                        if (i > oldi && j < oldj && chessMan[oldi][oldj - 1] == 0)
+                            return true;
+                        if (i < oldi && j > oldj && chessMan[oldi][oldj + 1] == 0)
+                            return true;
+                        if (i < oldi && j < oldj && chessMan[oldi][oldj - 1] == 0)
+                            return true;
+                    }
                     break;
                 default:
                     return false;
             }
-            return true;
+            return false;
         }
 
         //移动棋子

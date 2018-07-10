@@ -17,6 +17,7 @@ namespace ChineseChess
         private Dictionary<int, Image> chessmanImagePair;
         private const int RowSum = 10;
         private const int ColSum = 9;
+        private int[] lastStep;
         private PictureBox currentChosenPictureBox = null;
         private Image currentChosenImage = null;
         private System.Timers.Timer flickerTimer;
@@ -69,13 +70,16 @@ namespace ChineseChess
                 flickerTimer.Interval = 500;
                 flickerTimer.AutoReset = true;
 
-                this.skipToolStripMenuItem.Enabled = true;
-                this.undoToolStripMenuItem.Enabled = true;
+                lastStep = new int[6];
             }
             //重置游戏，重新摆放棋子
             this.ResetAllChessman();
             //初始化闪动定时器
             DisableFlickerTimer();
+
+            this.skipToolStripMenuItem.Enabled = true;
+            this.undoToolStripMenuItem.Enabled = true;
+            SetLastStep(-1, -1, -1, -1, -1, -1);
         }
 
         //重置所有棋子
@@ -99,8 +103,8 @@ namespace ChineseChess
             if (true == gameController.CanMove(lasti, lastj, i, j) && true == gameController.IsGameOver(i, j))
                 gameWillOver = true;
             //移动
-            if (false == gameController.SetChessman(lasti, lastj, i, j))
-                return false;
+            SetLastStep(lasti, lastj, i, j, gameController.GetChessman(lasti, lastj), gameController.GetChessman(i, j));
+            gameController.SetChessman(lasti, lastj, i, j);
             PictureBox pictureBox = (PictureBox)this.panelChessman.Controls[i * ColSum + j];
             pictureBox.Image = chessmanImagePair[gameController.GetChessman(i, j)];
             PictureBox oldPictureBox = (PictureBox)this.panelChessman.Controls[lasti * ColSum + lastj];
@@ -117,6 +121,17 @@ namespace ChineseChess
             return true;
         }
 
+        //记录上一步的信息
+        private void SetLastStep(int lasti, int lastj, int i, int j, int lastValue, int value)
+        {
+            lastStep[0] = lasti;
+            lastStep[1] = lastj;
+            lastStep[2] = i;
+            lastStep[3] = j;
+            lastStep[4] = lastValue;
+            lastStep[5] = value;
+        }
+
         //右键菜单-跳过回合
         private void SkipToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -127,7 +142,14 @@ namespace ChineseChess
         //右键菜单-撤销
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (lastStep[0] == -1)
+                return;
+            gameController.ResetChessman(lastStep[0], lastStep[1], lastStep[2], lastStep[3], lastStep[4], lastStep[5]);
+            PictureBox pictureBox = (PictureBox)this.panelChessman.Controls[lastStep[2] * ColSum + lastStep[3]];
+            pictureBox.Image = chessmanImagePair[lastStep[5]];
+            PictureBox oldPictureBox = (PictureBox)this.panelChessman.Controls[lastStep[0] * ColSum + lastStep[1]];
+            oldPictureBox.Image = chessmanImagePair[lastStep[4]];
+            SetLastStep(-1, -1, -1, -1, -1, -1);
         }
 
         //右键菜单-退出

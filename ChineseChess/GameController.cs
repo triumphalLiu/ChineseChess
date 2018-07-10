@@ -102,6 +102,7 @@ namespace ChineseChess
             return count;
         }
 
+        //判断是否可以移动
         public bool CanMove(int oldi, int oldj, int i, int j)
         {
             //是否越界
@@ -223,14 +224,20 @@ namespace ChineseChess
             return false;
         }
 
-        //移动棋子
-        public bool SetChessman(int oldi, int oldj, int i, int j)
+        //还原棋子
+        public void ResetChessman(int oldi, int oldj, int i, int j, int oldValue, int value)
         {
-            if (CanMove(oldi, oldj, i, j) == false) return false;
+            chessMan[i][j] = value;
+            chessMan[oldi][oldj] = oldValue;
+            TransTurn();
+        }
+
+        //移动棋子
+        public void SetChessman(int oldi, int oldj, int i, int j)
+        {
             chessMan[i][j] = chessMan[oldi][oldj];
             chessMan[oldi][oldj] = 0;
             TransTurn();
-            return true;
         }
 
         //跳过回合，防止TransTurn被滥用

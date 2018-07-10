@@ -55,7 +55,9 @@ namespace ChineseChess
                             pictureBox.Location = new Point(i * 83, 15 + j * 83);
                         pictureBox.Parent = panelChessman;
                         pictureBox.BackColor = Color.Transparent;
-                        pictureBox.Click += new EventHandler(ClickChess);
+                        pictureBox.Click += new EventHandler(ClickChessEvent);
+                        pictureBox.MouseEnter += new EventHandler(MouseEnterEvent);
+                        pictureBox.MouseLeave += new EventHandler(MouseExitEvent);
                         panelChessman.Controls.Add(pictureBox);
                     }
                 }
@@ -113,8 +115,60 @@ namespace ChineseChess
             Application.Exit();
         }
 
+        //鼠标移至棋盘事件
+        private void MouseEnterEvent(object sender, EventArgs e)
+        {
+            //获取当前的PictureBox
+            PictureBox pictureBox = (PictureBox)sender;
+            //当前没有选中且该点为空
+            if(currentChosenPictureBox == null && pictureBox.Image == null)
+            {
+                this.Cursor = Cursors.No;
+            }
+            //当前没有选中
+            else if(currentChosenPictureBox == null)
+            {
+                int index = 0;
+                foreach (Control control in this.panelChessman.Controls)
+                {
+                    if (pictureBox == (PictureBox)control)
+                        break;
+                    index++;
+                }
+                if (gameController.IsAvaliable(index / ColSum, index % ColSum) == false)
+                {
+                    this.Cursor = Cursors.No;
+                }
+            }
+            //当前有选中的
+            else
+            {
+                //如果有选中，那么尝试移动，先获取这些PictureBox的位置
+                PictureBox lastPictureBox = currentChosenPictureBox;
+                int index = 0, thisIndex = 0, lastIndex = 0;
+                foreach (Control control in this.panelChessman.Controls)
+                {
+                    if (lastPictureBox == (PictureBox)control)
+                        lastIndex = index;
+                    if (pictureBox == (PictureBox)control)
+                        thisIndex = index;
+                    index++;
+                }
+                if (true == gameController.CanMove(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
+                    this.Cursor = Cursors.Hand;
+                else
+                    this.Cursor = Cursors.No;
+            }
+        }
+
+        //鼠标移出棋盘事件
+        private void MouseExitEvent(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+        }
+
         //鼠标点击棋盘事件
-        private void ClickChess(object sender, EventArgs e)
+        private void ClickChessEvent(object sender, EventArgs e)
         {
             //获取当前的PictureBox
             PictureBox pictureBox = (PictureBox)sender;

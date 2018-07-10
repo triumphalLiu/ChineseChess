@@ -61,8 +61,7 @@ namespace ChineseChess
             return avalChess[i][j];
         }
 
-        //移动棋子
-        public bool SetChessman(int oldi, int oldj, int i, int j)
+        public bool CanMove(int oldi, int oldj, int i, int j)
         {
             //是否越界
             if (i < minY || i > maxY || j < minX || j > maxX)
@@ -74,7 +73,7 @@ namespace ChineseChess
             int type = chessMan[oldi][oldj];
             switch (Math.Abs(type))
             {
-                case 0:return false;
+                case 0: return false;
                 //帅/将 必须在九宫格内，每次只能移动一步
                 case 1:
                     break;
@@ -99,6 +98,13 @@ namespace ChineseChess
                 default:
                     return false;
             }
+            return true;
+        }
+
+        //移动棋子
+        public bool SetChessman(int oldi, int oldj, int i, int j)
+        {
+            if (CanMove(oldi, oldj, i, j) == false) return false;
             chessMan[i][j] = chessMan[oldi][oldj];
             chessMan[oldi][oldj] = 0;
             TransTurn();

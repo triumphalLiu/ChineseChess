@@ -24,6 +24,9 @@ namespace ChineseChess
         public MainForm()
         {
             InitializeComponent();
+            this.MaximizeBox = false;
+            this.skipToolStripMenuItem.Enabled = false;
+            this.undoToolStripMenuItem.Enabled = false;
             //添加编号和Image对应的字典
             chessmanImagePair = new Dictionary<int, Image>();
             chessmanImagePair.Add(-7, Properties.Resources.enemy7); chessmanImagePair.Add(7, Properties.Resources.friend7);
@@ -65,11 +68,14 @@ namespace ChineseChess
                 flickerTimer.Elapsed += new ElapsedEventHandler(TimerPictureBoxFlicker);
                 flickerTimer.Interval = 500;
                 flickerTimer.AutoReset = true;
+
+                this.skipToolStripMenuItem.Enabled = true;
+                this.undoToolStripMenuItem.Enabled = true;
             }
             //重置游戏，重新摆放棋子
             this.ResetAllChessman();
             //初始化闪动定时器
-            flickerTimer.Enabled = false;
+            DisableFlickerTimer();
         }
 
         //重置所有棋子
@@ -88,18 +94,33 @@ namespace ChineseChess
         //移动单个棋子
         private bool ResetAChessman(int lasti, int lastj, int i, int j)
         {
+            //游戏是否即将结束
+            bool gameWillOver = false;
+            if (true == gameController.CanMove(lasti, lastj, i, j) && true == gameController.IsGameOver(i, j))
+                gameWillOver = true;
+            //移动
             if (false == gameController.SetChessman(lasti, lastj, i, j))
                 return false;
             PictureBox pictureBox = (PictureBox)this.panelChessman.Controls[i * ColSum + j];
             pictureBox.Image = chessmanImagePair[gameController.GetChessman(i, j)];
             PictureBox oldPictureBox = (PictureBox)this.panelChessman.Controls[lasti * ColSum + lastj];
             oldPictureBox.Image = chessmanImagePair[0];
+            if (gameWillOver)
+            {
+                bool winner = gameController.GameOver();
+                currentChosenImage = null;
+                DisableFlickerTimer();
+                this.skipToolStripMenuItem.Enabled = false;
+                this.undoToolStripMenuItem.Enabled = false;
+                MessageBox.Show("游戏结束！" + (winner == false ? "红" : "黑") + "方胜利");
+            }
             return true;
         }
 
         //右键菜单-跳过回合
         private void SkipToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DisableFlickerTimer();
             gameController.SkipTurn();
         }
 
@@ -212,16 +233,16 @@ namespace ChineseChess
                     index++;
                 }
                 //尝试移动，如果可以移动，那么先改变再禁用；如果不可移动，那么先禁用再改变
-                if (true == ResetAChessman(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
+                if (true == gameController.CanMove(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
                 {
+                    this.ResetAChessman(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum);
                     currentChosenPictureBox = pictureBox;
                     DisableFlickerTimer();
                 }
                 else
                 {
                     DisableFlickerTimer();
-                    currentChosenPictureBox = pictureBox;
-                    flickerTimer.Enabled = true;
+                    currentChosenPictureBox = null;
                 }
             }
         }
@@ -229,7 +250,8 @@ namespace ChineseChess
         //禁用闪动定时器，没有选取的棋子或是选取的棋子已经完成了本次移动
         private void DisableFlickerTimer()
         {
-            currentChosenPictureBox.Image = currentChosenImage;
+            if(currentChosenImage != null)
+                currentChosenPictureBox.Image = currentChosenImage;
             flickerTimer.Enabled = false;
             currentChosenImage = null;
             currentChosenPictureBox = null;

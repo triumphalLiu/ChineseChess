@@ -54,11 +54,29 @@ namespace ChineseChess
         {
             return chessMan[i][j];
         }
-        
+
         //获取可移动状态
         public bool IsAvaliable(int i, int j)
         {
             return avalChess[i][j];
+        }
+
+        //游戏结束判断
+        public bool IsGameOver(int i, int j)
+        {
+            if(Math.Abs(chessMan[i][j]) == 1)
+                return true;
+            return false;
+        }
+
+        //游戏结束
+        public bool GameOver()
+        {
+            //使所有棋子不能再移动，并返回赢家
+            for (int i = 0; i < avalChess.Length; ++i)
+                for (int j = 0; j < avalChess[i].Length; ++j)
+                    avalChess[i][j] = false;
+            return !whosTurn;
         }
 
         //获取路径中棋子个数

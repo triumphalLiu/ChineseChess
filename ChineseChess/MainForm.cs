@@ -116,6 +116,7 @@ namespace ChineseChess
                 DisableFlickerTimer();
                 this.skipToolStripMenuItem.Enabled = false;
                 this.undoToolStripMenuItem.Enabled = false;
+                this.Cursor = Cursors.Default;
                 MessageBox.Show("游戏结束！" + (winner == false ? "红" : "黑") + "方胜利");
             }
             return true;
@@ -181,6 +182,10 @@ namespace ChineseChess
                 if (gameController.IsAvaliable(index / ColSum, index % ColSum) == false)
                 {
                     this.Cursor = Cursors.No;
+                }
+                else
+                {
+                    this.Cursor = Cursors.Hand;
                 }
             }
             //当前有选中的
@@ -258,6 +263,7 @@ namespace ChineseChess
                 if (true == gameController.CanMove(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum))
                 {
                     this.ResetAChessman(lastIndex / ColSum, lastIndex % ColSum, thisIndex / ColSum, thisIndex % ColSum);
+                    this.Cursor = Cursors.No;
                     currentChosenPictureBox = pictureBox;
                     DisableFlickerTimer();
                 }

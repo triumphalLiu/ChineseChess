@@ -158,6 +158,7 @@ namespace ChineseChess
         //右键菜单-跳过回合
         private void SkipToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            RemoveHelper();
             DisableFlickerTimer();
             gameController.SkipTurn();
         }
@@ -167,6 +168,8 @@ namespace ChineseChess
         {
             if (lastStep[0] == -1)
                 return;
+            RemoveHelper();
+            DisableFlickerTimer();
             gameController.ResetChessman(lastStep[0], lastStep[1], lastStep[2], lastStep[3], lastStep[4], lastStep[5]);
             PictureBox pictureBox = (PictureBox)this.panelChessman.Controls[lastStep[2] * ColSum + lastStep[3]];
             pictureBox.Image = chessmanImagePair[lastStep[5]];

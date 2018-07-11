@@ -116,8 +116,11 @@ namespace ChineseChess
             switch (Math.Abs(type))
             {
                 case 0: return false;
-                //帅/将 必须在九宫格内，每次只能移动一步
+                //帅/将 必须在九宫格内，每次只能移动一步，或者移动到对方的将
                 case 1:
+                    //移动到对方的将，且中间没有阻挡
+                    if (chessMan[i][j] == -chessMan[oldi][oldj] && GetChessmanCountInPath(oldi, oldj, i, j) == 0)
+                        return true;
                     //目标仅移动一步
                     if (Math.Abs(i - oldi) + Math.Abs(j - oldj) != 1)
                         return false;

@@ -126,6 +126,8 @@ namespace ChineseChess
         //获取路径中棋子个数
         public int GetChessmanCountInPath(int oldi, int oldj, int i, int j)
         {
+            if (i != oldi && j != oldj)
+                return -1;
             int count = 0;
             if(i == oldi)
             {
